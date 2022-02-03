@@ -1,0 +1,80 @@
+--QUESTION ONE
+-- Who are our top 10 customers and how much have they spent and ordered?
+
+SELECT 
+c.CustomerID,
+c.CompanyName,
+c.Address,
+c.Phone,
+MAX(Freight) AS Purchase
+FROM Orders o
+LEFT JOIN Customers c
+USING (CustomerID)
+GROUP BY CustomerID 
+ORDER BY MAX(Freight) DESC
+LIMIT 10
+
+--QUESTION TWO
+-- What are our top customers’ favorite products?
+
+
+SELECT 
+p.ProductID,
+p.ProductName,
+p.ReorderLevel
+FROM Products p
+JOIN OrderDetails od
+USING (ProductID)
+GROUP BY ProductID
+ORDER BY p.ReorderLevel DESC
+LIMIT 10
+
+--QUESTION THREE
+
+
+
+--QUESTION FOUR
+-- What are our top 10 most popular products?
+SELECT 
+p.ProductID,
+p.ProductName,
+p.ReorderLevel
+FROM Products p
+JOIN OrderDetails od
+USING (ProductID)
+GROUP BY ProductID
+ORDER BY p.ReorderLevel DESC
+LIMIT 10
+
+--QUESTION FIVE
+-- Who are the suppliers for our most popular products?
+
+SELECT 
+p.ProductID,
+p.ProductName,
+p.ReorderLevel,
+s.SupplierID,
+s.CompanyName AS Suppliers,
+s.Address,
+s.Phone
+FROM Suppliers s
+JOIN Products p
+USING (SupplierID)
+GROUP BY ProductID
+ORDER BY p.ReorderLevel DESC
+LIMIT 10
+
+--QUESTION SIX
+-- Who are our top 15 best performed Employees?
+
+SELECT 
+e.EmployeeID,
+e.FirstName,
+e.LastName,
+e.Title,
+MAX(Freight) AS Freight 
+FROM Orders o
+LEFT JOIN Employees e
+USING (EmployeeID)
+GROUP BY EmployeeID 
+ORDER BY MAX(Freight) DESC
