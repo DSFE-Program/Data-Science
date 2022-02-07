@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/PC/Documents/DSFE/Business_db.sqlite3" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3036"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,29:mainAlphabetical list of products"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Alphabetical list of products" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="73"/><column index="2" value="206"/><column index="3" value="74"/><column index="4" value="82"/><column index="5" value="126"/><column index="6" value="65"/><column index="7" value="89"/><column index="8" value="94"/><column index="9" value="95"/><column index="10" value="91"/><column index="11" value="103"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">
+                 --OLUCHI ONUOHA (oluchi.onuohaDSFE@tech4dev.com)
+				 --SQL TASK
+
+
+--Summary of Products
+Select * From Products;
+Select MIN(UnitPrice) As MinimumPrice From Products;
+Select MAX(UnitPrice) As MaximumPrice From Products;
+Select AVG(UnitPrice) As AveragePrice From Products;
+Select COUNT(ProductID) From Products;
+Select SUM(UnitsInStock) As StockCount From Products;
+
+
+
+--Question 1
+
+Select Customers.CompanyName As Name, sum(OrderDetails.UnitPrice*Quantity) As TotalSpend
+FROM Customers JOIN Orders on Customers.CustomerID = Orders.CustomerID
+JOIN OrderDetails on Orders.OrderId = OrderDetails.OrderID
+GROUP BY Customers.CustomerID
+ORDER BY TotalSpend DESC
+LIMIT 10;
+
+--Question 2 
+
+Select Customers.CompanyName As Name, sum(OrderDetails.UnitPrice*Quantity) As TotalSpend, Products.ProductName
+FROM Customers JOIN Orders on Customers.CustomerID = Orders.CustomerID
+JOIN OrderDetails on Orders.OrderId = OrderDetails.OrderID
+JOIN Products on OrderDetails.ProductID = Products.ProductID
+GROUP BY Customers.CustomerID
+ORDER BY TotalSpend DESC
+LIMIT 10;
+
+--Question 3
+
+Select Customers.Country As Country, count(Customers.CustomerID) As NumberOfCustomers, sum(OrderDetails.UnitPrice*Quantity) As TotalSpend
+FROM Customers JOIN Orders on Customers.CustomerID = Orders.CustomerID
+JOIN OrderDetails on Orders.OrderId = OrderDetails.OrderID
+GROUP BY Customers.Country
+ORDER BY NumberOfCustomers DESC;
+
+--Question 4
+
+SELECT OrderDetails.ProductID, Products.ProductName As Product, count(Orders.OrderID) As OrderCount
+FROM Products JOIN OrderDetails On Products.ProductID = OrderDetails.ProductID
+JOIN Orders On OrderDetails.OrderId = Orders.OrderId
+GROUP BY Products.ProductName
+ORDER BY OrderCount DESC
+LIMIT 10;
+
+--Question 5
+
+SELECT OrderDetails.ProductID, Products.ProductName As Product, count(Orders.OrderID) As OrderCount, Suppliers.CompanyName As Supplier
+FROM Products JOIN OrderDetails On Products.ProductID = OrderDetails.ProductID
+JOIN Orders On OrderDetails.OrderId = Orders.OrderId
+JOIN Suppliers On Products.SupplierID = Suppliers.SupplierID
+GROUP BY Products.ProductName
+ORDER BY OrderCount DESC
+LIMIT 10;
+
+--Question 6
+
+SELECT Employees.EmployeeID, Employees.FirstName, Employees.LastName, count( Orders.EmployeeID) As SalesCount
+FROM Employees JOIN Orders On Employees.EmployeeID = Orders.EmployeeID
+Group BY Employees.EmployeeID
+ORDER BY SalesCount DESC;</sql><current_tab id="0"/></tab_sql></sqlb_project>
