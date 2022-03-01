@@ -1,0 +1,97 @@
+QUESTION ONE
+SELECT          SUB_1.ContactName,
+        SUB_1.CompanyName,
+        SUB_2.UnitPrice,
+                      SUB_2.Quantity,
+                      SUB_1.OrderId,
+	      SUB_2.UnitPrice * SUB_2.Quantity AS Total_Amount
+FROM
+	(SELECT Orders.OrderId,Customers.ContactName,Customers.CompanyName 
+	FROM Customers
+	JOIN Orders ON Customers.CustomerID = Orders.CustomerID)SUB_1
+JOIN 	
+(SELECT Products.ProductName, OrderDetails.UnitPrice,          OrderDetails.Quantity,OrderDetails.OrderID
+	FROM OrderDetails JOIN Products ON Products.ProductID=OrderDetails.ProductID)SUB_2
+	ON SUB_2.OrderId = SUB_1.OrderId
+GROUP BY SUB_1.OrderId
+ORDER BY Total_Amount DESC
+
+
+
+QUESTION TWO
+SELECT		SUB_1.ContactName,
+SUB_1.CompanyName,
+SUB_2.ProductName,
+SUB_2.UnitPrice,
+SUB_2.Quantity,
+		SUB_2.UnitPrice * SUB_2.Quantity AS Total_Amount
+FROM
+	(SELECT Orders.OrderId,Customers.ContactName,Customers.CompanyName 
+	FROM Customers
+	JOIN Orders ON Customers.CustomerID = Orders.CustomerID)SUB_1
+JOIN 
+(SELECT Products.ProductName, OrderDetails.UnitPrice, OrderDetails.Quantity,OrderDetails.OrderID
+	FROM OrderDetails JOIN Products ON Products.ProductID = OrderDetails.ProductID)SUB_2
+	ON SUB_2.OrderId = SUB_1.OrderId
+GROUP BY SUB_1.OrderId
+
+ORDER BY Total_Amount DESC
+LIMIT 10
+QUESTION THREE
+SELECT	SUB_1.ContactName,
+SUB_1.CompanyName,
+SUB_2.UnitPrice,
+SUB_2.Quantity,
+SUB_1.OrderId,
+SUB_1.Country,
+SUB_2.UnitPrice * SUB_2.Quantity AS Total_Amount
+FROM
+	(SELECT Orders.OrderId,Customers.ContactName,Customers.CompanyName, Customers.Country 
+	FROM Customers
+	JOIN ORDERS ON Customers.CustomerID = Orders.CustomerID)SUB_1
+JOIN
+(SELECT 	Products.ProductName,
+ OrderDetails.UnitPrice, 
+OrderDetails.Quantity,
+OrderDetails.OrderID
+	FROM 	OrderDetails 
+JOIN Products ON Products.ProductID = OrderDetails.ProductID)SUB_2
+ON SUB_2.OrderId = SUB_1.OrderId
+GROUP BY SUB_1.OrderId
+ORDER BY Total_Amount DESC
+LIMIT 10
+QUESTION FOUR
+ SELECT Products.*
+  FROM Products
+  ORDER BY UnitsOnOrder DESC
+  LIMIT 10
+
+QUESTION FIVE 
+SELECT Products.ProductName,
+   Products.UnitsOnOrder, 
+  Suppliers.CompanyName
+FROM Products
+JOIN Suppliers ON
+Products.SupplierID = Suppliers.SupplierID
+ORDER BY UnitsOnOrder DESC
+LIMIT 10
+
+QUESTION FIVE
+SELECT 
+		sub.OrderId,
+		Employees.TitleOfCourtesy,
+		Employees.FirstName,
+		Employees.LastName,
+		Employees.Title,
+		Sub.UnitPrice, Sub.Quantity,
+		Sub.UnitPrice * Sub.Quantity AS Total_amount_Realised_by_Employees
+		
+FROM(SELECT Orders.EmployeeID, OrderDetails.*
+	FROM Orders
+	JOIN OrderDetails ON OrderDetails.OrderId = Orders.OrderId)Sub
+JOIN Employees ON
+Employees.EmployeeID = Sub.EmployeeID
+GROUP BY OrderId
+ORDER BY Total_amount_Realised_by_Employees DESC
+LIMIT 10
+ 
