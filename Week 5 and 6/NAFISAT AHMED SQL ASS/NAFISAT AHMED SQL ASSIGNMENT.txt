@@ -1,0 +1,94 @@
+---Question 1: Selecting the Top 10 Customers
+SELECT c.CustomerID, c.CompanyName, SUM((o.Quantity * o.UnitPrice)-o.Discount) as Total_Spent
+FROM OrderDetails as o
+LEFT JOIN Orders on Orders.OrderId = o.OrderId
+LEFT JOIN Customers as c on c.CustomerID = Orders.CustomerID
+GROUP by c.CustomerID
+ORDER by Total_Spent DESC
+LIMIT 10;	
+
+
+-----------------------------------------------------------------------------------------
+---Question 2: Determining the Favourite Foods of the Top Cusomers
+SELECT CompanyName, CustomerID, ProductName, ProductID, Number_Of_Times_Ordered, Total_spent as Total_Spent_On_Product
+FROM
+(
+-- This is to get the number of times each product was ordered by a top customer 
+-- I'm defining favourite product as the one ordered the most.
+SELECT top.CompanyName, top.CustomerID, p.ProductName, p.ProductID, sum(od.Quantity)as Total_Quantity_Ordered, count(od.Quantity) as Number_Of_Times_Ordered, sum((od.Quantity * od.UnitPrice) - od.Discount) as Total_spent
+FROM Products as p
+LEFT JOIN OrderDetails as od on od.ProductID = p.ProductID
+LEFT JOIN Orders on od.OrderId = Orders.OrderId
+INNER JOIN 
+
+(-- This is just to retrieve the top ten customers 
+SELECT c.CustomerID, c.CompanyName,sum((o.Quantity * o.UnitPrice)-o.Discount) as Total_Spent
+FROM OrderDetails as o
+LEFT JOIN Orders on Orders.OrderId = o.OrderId
+LEFT JOIN Customers as c on c.CustomerID = Orders.CustomerID
+GROUP by c.customerID
+ORDER by Total_Spent DESC
+LIMIT 10)   as top
+
+on top.CustomerID = Orders.CustomerID
+GROUP BY CompanyName, ProductName
+HAVING Number_Of_Times_Ordered > 1
+ORDER by Number_Of_Times_Ordered DESC
+)
+
+GROUP BY CompanyName --The previous ordering ensures that each customer’s favourite is selected;
+
+
+------------------------------------------------------------------------------------------------------------------------------
+-- Question 3: The Top Countries and How Much They Spent
+--Calculating how much was spent by country
+SELECT c.Country, sum((od.UnitPrice * od.Quantity)- od.Discount) as Total_Spent, TopC.No_Of_Customers
+FROM 
+Customers as c 
+INNER JOIN
+(--- Selecting the top 10 countries
+SELECT Country, count(CompanyName) as No_Of_Customers
+FROM Customers
+GROUP BY Country
+ORDER BY No_Of_Customers DESC
+LIMIT 10) as TopC
+on c.Country = TopC.Country
+LEFT JOIN Orders as o on o.CustomerID = c.CustomerID
+LEFT JOIN OrderDetails as od on o.OrderId = od.OrderId
+GROUP BY c.Country
+ORDER BY Total_Spent DESC;
+-----------------------------------------------------------------------------------------------
+-- Question 4: Determining the 10 Most Popular Products
+-- Here, I'm defining popular to mean having the most number of Orders
+SELECT p.ProductName, p.ProductID, count(od.OrderId) AS No_Of_Orders
+FROM OrderDetails as od
+INNER JOIN Products as p on p.ProductID = od.ProductID
+GROUP BY p.ProductName
+ORDER BY No_Of_Orders DESC
+LIMIT 10;
+
+
+--------------------------------------------------------------------------------------------------------------------------
+-- Question 5: Getting the Suppliers of the Top 10 Products
+SELECT topP.ProductName, topP.ProductID, s.CompanyName as SupplierName
+FROM Suppliers as s
+INNER JOIN 
+(-- Most popular products
+SELECT p.ProductName, p.ProductID, p.SupplierID, count(od.OrderId) AS No_Of_Orders
+FROM OrderDetails as od
+INNER JOIN Products as p on p.ProductID = od.ProductID
+GROUP BY p.ProductName
+ORDER BY No_Of_Orders DESC
+LIMIT 10) as topP
+ON topP.SupplierID = s.SupplierID;
+
+----------------------------------------------------------------------------------------------------------------------------------
+-- Question 6: 15 Best Performing Employees
+-- There are only 9 employees, so I will do top 3
+SELECT (e.FirstName || " " || e.LastName) as Employee, round(sum((od.UnitPrice * od.Quantity)- od.Discount)) as TotalSales
+FROM Employees as e
+INNER JOIN Orders as o ON o.EmployeeID = e.EmployeeID
+INNER JOIN OrderDetails as od on o.OrderId = od.OrderId
+GROUP BY e.EmployeeID
+ORDER BY TotalSales DESC
+LIMIT 3;
