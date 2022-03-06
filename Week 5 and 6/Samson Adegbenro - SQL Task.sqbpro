@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Spike/Downloads/Business_db.sqlite3" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2763"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,29:mainAlphabetical list of products"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Alphabetical list of products" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="73"/><column index="2" value="206"/><column index="3" value="74"/><column index="4" value="82"/><column index="5" value="126"/><column index="6" value="65"/><column index="7" value="89"/><column index="8" value="94"/><column index="9" value="95"/><column index="10" value="91"/><column index="11" value="103"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">------- QUESTION 1
+---- Query Top 10 customers
+
+SELECT Customers.CompanyName AS Company_Name, SUM((OrderDetails.UnitPrice*Quantity)-Discount) As Total_Spend, COUNT (Orders.CustomerID) AS Number_of_Orders
+FROM Customers JOIN Orders on Customers.CustomerID = Orders.CustomerID 
+JOIN OrderDetails on Orders.OrderId = OrderDetails.OrderID
+GROUP BY Customers.CustomerID
+ORDER BY Total_Spend DESC 
+LIMIT 10;
+
+--QUESTION 2
+--TOP CUSTOMERS' Favourite Products (Showing Top 5 customers)
+SELECT Customers.CompanyName AS Customer, Customers.CustomerID, SUM((OrderDetails.UnitPrice*Quantity)-Discount) AS Total_Spend ,COUNT (Orders.CustomerID) AS Number_of_Orders, Products.ProductName AS Product_Name
+FROM Customers JOIN Orders on Customers.CustomerID = Orders.CustomerID 
+JOIN OrderDetails on Orders.OrderId = OrderDetails.OrderID
+JOIN Products on OrderDetails.ProductID=Products.ProductID
+GROUP BY Customers.CompanyName
+ORDER BY Number_of_Orders DESC
+LIMIT 5;
+
+-----QUESTION 3
+---- Customer Location and Total Spend Per Country
+SELECT Customers.Country AS Country, SUM((OrderDetails.UnitPrice * Quantity)-Discount) AS Total_Spend
+FROM Customers
+JOIN Orders on Customers.CustomerID = Orders.CustomerID 
+JOIN OrderDetails on Orders.OrderId = OrderDetails.OrderID
+GROUP BY Customers.Country
+ORDER BY Total_Spend DESC
+LIMIT 5;
+
+-----QUESTION 4
+--TOP 10 MOST Popular Products
+SELECT OrderDetails.ProductID, Products.ProductName AS Product_Name, SUM((OrderDetails.UnitPrice*Quantity)-Discount) AS Total_Spend,
+COUNT (Orders.OrderID) AS Order_Count
+FROM Products JOIN OrderDetails on Products.ProductID=OrderDetails.ProductID
+JOIN Orders On OrderDetails.OrderId = Orders.OrderId
+GROUP BY Products.ProductName
+ORDER BY Order_Count DESC
+LIMIT 10;
+
+-----QUESTION 5
+----Suppliers for most popular products
+SELECT Products.ProductName AS Product_Name, SUM((OrderDetails.UnitPrice*Quantity)-Discount) AS Total_Spend, 
+COUNT (Orders.OrderID) AS Order_Count, Suppliers.CompanyName AS Supplier
+FROM Products JOIN OrderDetails on Products.ProductID=OrderDetails.ProductID
+JOIN Orders On OrderDetails.OrderId = Orders.OrderId
+JOIN Suppliers on Suppliers.SupplierID=Products.SupplierID
+GROUP BY Products.ProductName
+ORDER BY Order_Count DESC
+LIMIT 10;
+
+-----QUESTION 6
+-----TOP 15 BEST PERFORMED EMPLOYEES
+SELECT Employees.EmployeeID, Employees.FirstName AS First_Name, Employees.LastName AS Last_Name, COUNT (Orders.EmployeeID) As Sales_Count
+FROM Employees JOIN Orders On Employees.EmployeeID = Orders.EmployeeID
+Group BY Employees.EmployeeID
+ORDER BY Sales_Count DESC;</sql><current_tab id="0"/></tab_sql></sqlb_project>
